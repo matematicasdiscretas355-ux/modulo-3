@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRoute - Módulo 3: Asignación Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #64748B;
+            --primary-dark: #475569;
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card-header-main {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            padding: 24px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header-main h1 {
+            margin: 0 0 8px 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .card-header-main p {
+            margin: 0;
+            font-size: 13px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 6px 0;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0 0 18px 0;
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--text-main);
+            background: #FFFFFF;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        th {
+            background-color: #F8FAFC;
+            color: #475569;
+            text-align: left;
+            padding: 12px 14px;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        td {
+            padding: 14px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+        }
+
+        .badge-zona {
+            background: #E2E8F0;
+            color: #475569;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-estado {
+            background: #FEF3C7;
+            color: #D97706;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .btn-action {
+            background-color: var(--primary-dark);
+            color: #FFFFFF;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            transition: background 0.2s ease;
+        }
+
+        .btn-action:hover {
+            background-color: #334155;
+        }
+
+        /* Estructura del panel de resultados idéntico al mockup */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .metric-box {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            background: #FFFFFF;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .metric-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1E293B;
+            margin: 0;
+        }
+
+        .package-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1E293B;
+            margin: 0 0 12px 0;
+        }
+
+        .package-item {
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 12px;
+            background: #FFFFFF;
+        }
+
+        .package-left {
+            color: #1E293B;
+        }
+
+        .package-left strong {
+            font-weight: 600;
+        }
+
+        .package-left span {
+            color: #64748B;
+        }
+
+        .package-right {
+            color: #334155;
+            font-weight: 500;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #334155;
+            border: 1px solid var(--border-color);
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #F1F5F9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="card-header-main">
+            <h1>Módulo 3 · Asignación inteligente</h1>
+            <p>Selecciona un vehículo y los pedidos pendientes. El sistema evaluará las combinaciones para respetar las capacidades nominales de peso y volumen.</p>
+        </header>
+
+        <section class="card">
+            <h2 class="card-title">1. Seleccionar Vehículo de la Flota (RF-02)</h2>
+            <p class="card-desc">Selecciona la unidad que recibirá la asignación óptima según su capacidad nominal.</p>
+            <select id="select-vehiculo" class="select-input">
+                <option value="">-- Selecciona un vehículo --</option>
+                {% for v in vehiculos %}
+                <option value="{{ v[0] }}">Placa: {{ v[1] }} | Capacidad Peso: {{ v[2] }} kg | Capacidad Volumen: {{ v[3] }} m3</option>
+                {% endfor %}
+            </select>
+        </section>
+
+        <section class="card">
+            <h2 class="card-title">2. Seleccionar Pedidos Pendientes a Evaluar (RF-01)</h2>
+            <p class="card-desc">Marca los pedidos para que el algoritmo combinatorio busque la agrupación ideal.</p>
+            
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"><input type="checkbox" id="chk-master" onclick="toggleTodos(this)"></th>
+                            <th>ID PEDIDO</th>
+                            <th>PESO (KG)</th>
+                            <th>VOLUMEN (M3)</th>
+                            <th>ZONA DESTINO</th>
+                            <th>ESTADO</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pedidos %}
+                        <tr>
+                            <td><input type="checkbox" class="chk-item" value="{{ p[0] }}"></td>
+                            <td><strong>{{ p[0] }}</strong></td>
+                            <td>{{ p[1] }} kg</td>
+                            <td>{{ p[2] }} m3</td>
+                            <td><span class="badge-zona">{{ p[3] }}</span></td>
+                            <td><span class="badge-estado">{{ p[4] }}</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="btn-action" onclick="ejecutarCalculo()">Calcular Asignacion Inteligente (HU-03)</button>
+        </section>
+
+        <!-- Bloque 3 idéntico a la imagen -->
+        <section class="card" id="seccion-resultado" style="display: none;">
+            <h2 class="card-title">3. Resultado de la Optimizacion Matematica</h2>
+            <p class="card-desc">Combinacion evaluada respetando los limites de carga y la afinidad de zona.</p>
+            
+            <div id="contenedor-resultado"></div>
+        </section>
+    </div>
+
+    <script>
+        function toggleTodos(master) {
+            document.querySelectorAll('.chk-item').forEach(chk => chk.checked = master.checked);
+        }
+
+        async function ejecutarCalculo() {
+            const vehiculoId = document.getElementById('select-vehiculo').value;
+            const pedidosSeleccionados = Array.from(document.querySelectorAll('.chk-item:checked')).map(chk => chk.value);
+            const seccion = document.getElementById('seccion-resultado');
+            const cont = document.getElementById('contenedor-resultado');
+
+            seccion.style.display = 'block';
+
+            if (!vehiculoId) {
+                cont.innerHTML = '<p style="color: #DC2626;">Debe seleccionar un vehículo en el Paso 1.</p>';
+                return;
+            }
+
+            if (pedidosSeleccionados.length === 0) {
+                cont.innerHTML = '<p style="color: #DC2626;">No se seleccionaron pedidos válidos en el Paso 2.</p>';
+                return;
+            }
+
+            cont.innerHTML = '<p style="color: #64748B;">Calculando optimización matemática...</p>';
+
+            try {
+                const resp = await fetch("/asignacion/calcular", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        vehiculo_id: vehiculoId,
+                        pedidos_ids: pedidosSeleccionados
+                    })
+                });
+
+                const data = await resp.json();
+
+                if (!resp.ok) {
+                    cont.innerHTML = `<p style="color: #DC2626;">${data.error || 'Error al procesar'}</p>`;
+                    return;
+                }
+
+                if (!data.pedidos_asignados || data.pedidos_asignados.length === 0) {
+                    cont.innerHTML = '<p style="color: #D97706;">Ningún pedido seleccionado cumple con las capacidades o la afinidad de zona del vehículo.</p>';
+                    return;
+                }
+
+                // Generar los bloques de pedidos asignados
+                let listaHtml = '';
+                data.pedidos_asignados.forEach(p => {
+                    listaHtml += `
+                        <div class="package-item">
+                            <div class="package-left">
+                                <strong>Pedido ${p.id}</strong> <span>— Zona: ${p.zona}</span>
+                            </div>
+                            <div class="package-right">
+                                ${p.peso} kg | ${p.volumen} m3
+                            </div>
+                        </div>
+                    `;
+                });
+
+                cont.innerHTML = `
+                    <div class="metrics-grid">
+                        <div class="metric-box">
+                            <span class="metric-label">VEHICULO ASIGNADO</span>
+                            <div class="metric-value">${data.placa}</div>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">ZONA PRIORIZADA (CRITERIO 2)</span>
+                            <div class="metric-value">${data.zona_priorizada}</div>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">CARGA DE PESO (CRITERIO 1)</span>
+                            <div class="metric-value">${data.peso_total} / ${data.cap_peso} kg</div>
+                        </div>
+                        <div class="metric-box">
+                            <span class="metric-label">CARGA DE VOLUMEN (CRITERIO 1)</span>
+                            <div class="metric-value">${data.volumen_total} / ${data.cap_vol} m3</div>
+                        </div>
+                    </div>
+
+                    <div class="package-title">Paquetes Asignados:</div>
+                    ${listaHtml}
+
+                    <button class="btn-secondary" onclick="window.location.reload()">Actualizar Lista en Pantalla</button>
+                `;
+            } catch (err) {
+                cont.innerHTML = '<p style="color: #DC2626;">Error al conectar con el servidor.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
